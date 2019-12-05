@@ -1,0 +1,10 @@
+- This is a web service in the cloud.
+- The users can upload two models
+    - The ideal geometry(.obj file)
+    - The actual geometry.(.stl file)
+* not sure about what the formats should be.
+
+- Once both models are uploaded, two models will be rendered on the screen on top of each other.
+The ideal geometry will be rendered with a matte color and the actual will be transparent.
+
+- The rendering magic will be done in the cloud.
