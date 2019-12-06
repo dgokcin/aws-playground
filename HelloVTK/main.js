@@ -2,6 +2,7 @@ const stlReader = vtk.IO.Geometry.vtkSTLReader.newInstance();
 const mapper = vtk.Rendering.Core.vtkMapper.newInstance();
 const actor = vtk.Rendering.Core.vtkActor.newInstance();
 
+actor.getProperty().setColor(1.0000, 0.3882, 0.2784)
 actor.setMapper(mapper)
 mapper.setInputConnection(stlReader.getOutputPort())
 
@@ -10,10 +11,7 @@ var stlButtonWrapper = document.querySelector(".stlButtonWrapper");
 var stlFileInput = stlButtonWrapper.querySelector('input')
 
 function update() {
-    // const fullScreenRenderer = vtk.Rendering.Misc.vtkFullScreenRenderWindow.newInstance();
-    // const renderer = fullScreenRenderer.getRenderer();
-    // const renderWindow = fullScreenRenderer.getRenderWindow();
-    const  vtkRenderWindow = vtk.Rendering.Core.vtkRenderWindow.newInstance();
+    const vtkRenderWindow = vtk.Rendering.Core.vtkRenderWindow.newInstance();
     const vtkRenderer = vtk.Rendering.Core.vtkRenderer.newInstance();
     const openGLRenderWindow = vtk.Rendering.OpenGL.vtkRenderWindow.newInstance();
 
@@ -36,9 +34,6 @@ function update() {
 
     const vtkInteractorStyleTrackballCamera = vtk.Interaction.Style.vtkInteractorStyleTrackballCamera.newInstance()
     vtkRenderWindowInteractor.setInteractorStyle(vtkInteractorStyleTrackballCamera);
-    // renderer.addActor(actor);
-    // renderer.resetCamera();
-    // renderWindow.render();
 }
 
 
@@ -47,8 +42,6 @@ function handleFile(event) {
     const dataTransfer = event.dataTransfer;
     const files = event.target.files || dataTransfer.files;
     if (files.length === 1) {
-        stlButtonWrapper.removeChild(stlFileInput);
-        
         // Dosya jsde boyle okunur
         const fileReader = new FileReader();
         
