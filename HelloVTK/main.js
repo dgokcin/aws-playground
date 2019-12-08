@@ -22,7 +22,7 @@ function updateMulti(files) {
         const mapper = vtk.Rendering.Core.vtkMapper.newInstance();
         const actor = vtk.Rendering.Core.vtkActor.newInstance(); 
         if (i===0) {
-            // actor.getProperty().setOpacity( 0.5);
+            actor.getProperty().setOpacity( 0.5);
         }
         actor.setMapper(mapper)
         mapper.setInputConnection(stlReader.getOutputPort())
