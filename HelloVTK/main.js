@@ -2,7 +2,7 @@ const stlReader = vtk.IO.Geometry.vtkSTLReader.newInstance();
 const mapper = vtk.Rendering.Core.vtkMapper.newInstance();
 const actor = vtk.Rendering.Core.vtkActor.newInstance();
 
-actor.getProperty().setColor(1.0000, 0.3882, 0.2784)
+// actor.getProperty().setColor(1.0000, 0.3882, 0.2784)
 actor.setMapper(mapper)
 mapper.setInputConnection(stlReader.getOutputPort())
 
@@ -44,7 +44,7 @@ function updateMulti(files) {
     openGLRenderWindow.setContainer(stlViewElement);
 
     const { width, height } = stlViewElement.getBoundingClientRect();
-    openGLRenderWindow.setSize(width, height);
+    openGLRenderWindow.setSize(100, 150);
 
     const  vtkRenderWindowInteractor = vtk.Rendering.Core.vtkRenderWindowInteractor.newInstance();
     vtkRenderWindowInteractor.setView(openGLRenderWindow);
