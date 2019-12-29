@@ -32,9 +32,16 @@ function updateMulti(files) {
             stlReader.parseAsArrayBuffer(fileReader.result);
             vtkRenderer.addActor(actor)
             vtkRenderer.resetCamera();
-            console.log(stlReader.getOutputData().getNumberOfPolys());
-            // console.log(stlReader.getOutputData().getNumberOfLines());
+            //console.log(stlReader.getOutputData().getNumberOfPolys());
+            var mesh = stlReader.getOutputData();
+            var points = mesh.getPoints()
+            var numPts = points.getNumberOfPoints()
+            for (var i = 0; i < numPts; i++) {
+                //console.log(points.getPoint(i));
+            }
+            //console.log(points.getClassName())
         };
+
 
         fileReader.readAsArrayBuffer(files[i]);
     }
