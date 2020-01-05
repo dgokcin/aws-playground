@@ -10,6 +10,8 @@ mapper.setInputConnection(stlReader.getOutputPort())
 var stlButtonWrapper = document.querySelector(".stlButtonWrapper");
 var stlFileInput = stlButtonWrapper.querySelector('input')
 
+var pointDatas = [];
+
 function updateMulti(files) {
     const vtkRenderWindow = vtk.Rendering.Core.vtkRenderWindow.newInstance();
     const vtkRenderer = vtk.Rendering.Core.vtkRenderer.newInstance();
@@ -35,11 +37,22 @@ function updateMulti(files) {
             //console.log(stlReader.getOutputData().getNumberOfPolys());
             var mesh = stlReader.getOutputData();
             var points = mesh.getPoints()
+            var pointData = []
+            // console.log(JSON.stringify(points))
             var numPts = points.getNumberOfPoints()
             for (var i = 0; i < numPts; i++) {
-                //console.log(points.getPoint(i));
+                let point = points.getPoint(i);
+                pointData.push({
+                    x: point[0],
+                    y: point[1],
+                    z: point[2],
+                    node_id: i
+                });
             }
-            //console.log(points.getClassName())
+            pointDatas.push(pointData);
+            console.log('Point data created. ' + pointData.length)
+            //console.log("Done")
+            //console.log(JSON.stringify(pointData))
         };
 
 
@@ -112,4 +125,24 @@ function handleFile(event) {
 }
 
 stlFileInput.addEventListener('change', handleFile)
+
+let element = document.getElementById("submitButton");
+const SERVER_URL = "https://snpnbj9ut1.execute-api.eu-west-2.amazonaws.com/v1/diff-calculator";
+
+element.addEventListener("click", function(event) {
+    event.stopPropagation();
+    let requestBody = {
+        mesh_points: pointDatas[0],
+        point_cloud: pointDatas[1]
+    };
+    console.log(JSON.stringify(pointDatas).length);
+
+    fetch(SERVER_URL, {
+        method: "POST", 
+        body: JSON.stringify(requestBody),
+      }).then(res => {
+          return res.text()
+      }).then(res => console.log(res.length))
+      .catch(err => console.log(err));
+});
 
