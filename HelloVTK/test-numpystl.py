@@ -1,12 +1,15 @@
 import numpy as np
 from stl import mesh
 from scipy import spatial
+import email.parser
+
 
 # original_mesh = mesh.Mesh.from_file("stl/3D_model_of_a_Cube.stl")
 # point_cloud = mesh.Mesh.from_file("stl/3D_model_of_a_Cube_deformed.stl")
 
 original_mesh = mesh.Mesh.from_file("stl/good-stanford-davsan.stl")
-point_cloud = mesh.Mesh.from_file("stl/bad-stanford-davsan-bended.stl")
+point_cloud = mesh.Mesh.from_file("stl/earless-stanford-davsan.stl")
+# point_cloud = mesh.Mesh.from_file("stl/bad-stanford-davsan-bended.stl")
 
 mesh_node_coordinates = np.around(np.unique(original_mesh.vectors.reshape([original_mesh.vectors.size//3, 3]), axis=0), 2)
 mesh_node_ids = number_list = [x for x in range(len(mesh_node_coordinates))]

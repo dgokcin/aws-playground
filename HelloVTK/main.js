@@ -120,29 +120,26 @@ function handleFile(event) {
 
         fileReader.readAsArrayBuffer(files[0]);
     } else if (files.length > 1) {
+        var fd = new FormData();
+        for(var x = 0; x < files.length; x++) {
+            fd.append('file', files[x]);
+        }
+
+        fetch('https://snpnbj9ut1.execute-api.eu-west-2.amazonaws.com/v3', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+            body: fd
+        }).then(resp => {
+            console.log(resp)
+        }).catch(err => {
+            console.log(err);
+        });
+
         updateMulti(files)
+
     }
 }
 
 stlFileInput.addEventListener('change', handleFile)
-
-let element = document.getElementById("submitButton");
-const SERVER_URL = "https://snpnbj9ut1.execute-api.eu-west-2.amazonaws.com/v1/diff-calculator";
-
-element.addEventListener("click", function(event) {
-    event.stopPropagation();
-    let requestBody = {
-        mesh_points: pointDatas[0],
-        point_cloud: pointDatas[1]
-    };
-    console.log(JSON.stringify(pointDatas).length);
-
-    fetch(SERVER_URL, {
-        method: "POST", 
-        body: JSON.stringify(requestBody),
-      }).then(res => {
-          return res.text()
-      }).then(res => console.log(res.length))
-      .catch(err => console.log(err));
-});
-
