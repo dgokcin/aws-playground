@@ -1,3 +1,22 @@
+// Initialize the Amazon Cognito credentials provider
+AWS.config.region = 'eu-west-2'; // Region
+AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: 'eu-west-2:c29775f8-8606-4a24-9cef-d514c3bff48a',
+});
+
+AWS.config.credentials.get(function(err) {
+    if (err) console.log(err);
+    console.log(AWS.config.credentials);
+});
+
+var bucketName = 'stl-differ-original'; // Enter your bucket name
+var bucket = new AWS.S3({
+    params: {
+        Bucket: bucketName
+    }
+});
+
+
 const stlReader = vtk.IO.Geometry.vtkSTLReader.newInstance();
 const mapper = vtk.Rendering.Core.vtkMapper.newInstance();
 const actor = vtk.Rendering.Core.vtkActor.newInstance();
@@ -34,28 +53,7 @@ function updateMulti(files) {
             stlReader.parseAsArrayBuffer(fileReader.result);
             vtkRenderer.addActor(actor)
             vtkRenderer.resetCamera();
-            //console.log(stlReader.getOutputData().getNumberOfPolys());
-            var mesh = stlReader.getOutputData();
-            var points = mesh.getPoints()
-            var pointData = []
-            // console.log(JSON.stringify(points))
-            var numPts = points.getNumberOfPoints()
-            for (var i = 0; i < numPts; i++) {
-                let point = points.getPoint(i);
-                pointData.push({
-                    x: point[0],
-                    y: point[1],
-                    z: point[2],
-                    node_id: i
-                });
-            }
-            pointDatas.push(pointData);
-            console.log('Point data created. ' + pointData.length)
-            //console.log("Done")
-            //console.log(JSON.stringify(pointData))
         };
-
-
         fileReader.readAsArrayBuffer(files[i]);
     }
 
@@ -120,22 +118,42 @@ function handleFile(event) {
 
         fileReader.readAsArrayBuffer(files[0]);
     } else if (files.length > 1) {
-        var fd = new FormData();
-        for(var x = 0; x < files.length; x++) {
-            fd.append('file', files[x]);
+        var file_original = files[0];
+        // var file_pc = fileChooser.files[1];
+        if (file_original) {
+            var objKey = file_original.name;
+            var params = {
+                Key: objKey,
+                ContentType: file_original.type,
+                Body: file_original,
+                ACL: 'public-read-write'
+            };
+
+            bucket.putObject(params, function(err, data) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    listObjs();
+                }
+            });
+        } else {
+            results.innerHTML = 'Nothing to upload.';
         }
 
-        fetch('https://snpnbj9ut1.execute-api.eu-west-2.amazonaws.com/v3', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
-            body: fd
-        }).then(resp => {
-            console.log(resp)
-        }).catch(err => {
-            console.log(err);
-        });
+        
+
+        // var fd = new FormData();
+        // fetch('https://snpnbj9ut1.execute-api.eu-west-2.amazonaws.com/v3', {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'multipart/form-data'
+        //     },
+        //     body: fd
+        // }).then(resp => {
+        //     console.log(resp)
+        // }).catch(err => {
+        //     console.log(err);
+        // });
 
         updateMulti(files)
 
