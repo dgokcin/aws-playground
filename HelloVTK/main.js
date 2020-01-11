@@ -126,7 +126,7 @@ function handleFile(event) {
                 Key: objKey,
                 ContentType: file_original.type,
                 Body: file_original,
-                ACL: 'public-read-write'
+                // ACL: 'public-read-write'
             };
 
             bucket.putObject(params, function(err, data) {
