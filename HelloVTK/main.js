@@ -26,7 +26,7 @@ actor.setMapper(mapper)
 mapper.setInputConnection(stlReader.getOutputPort())
 
 
-var stlButtonWrapper = document.querySelector(".stlButtonWrapper");
+var stlButtonWrapper = document.querySelector(".input-container");
 var stlFileInput = stlButtonWrapper.querySelector('input')
 
 var pointDatas = [];
@@ -64,7 +64,7 @@ function updateMulti(files) {
     openGLRenderWindow.setContainer(stlViewElement);
 
     const { width, height } = stlViewElement.getBoundingClientRect();
-    openGLRenderWindow.setSize(width, height);
+    openGLRenderWindow.setSize(900, 700);
 
     const  vtkRenderWindowInteractor = vtk.Rendering.Core.vtkRenderWindowInteractor.newInstance();
     vtkRenderWindowInteractor.setView(openGLRenderWindow);
@@ -90,7 +90,7 @@ function update() {
     openGLRenderWindow.setContainer(stlViewElement);
 
     const { width, height } = stlViewElement.getBoundingClientRect();
-    openGLRenderWindow.setSize(width, height);
+    openGLRenderWindow.setSize(900, 700);
 
     const  vtkRenderWindowInteractor = vtk.Rendering.Core.vtkRenderWindowInteractor.newInstance();
     vtkRenderWindowInteractor.setView(openGLRenderWindow);
@@ -119,25 +119,41 @@ function handleFile(event) {
         fileReader.readAsArrayBuffer(files[0]);
     } else if (files.length > 1) {
         var file_original = files[0];
-        // var file_pc = fileChooser.files[1];
-        if (file_original) {
-            var objKey = file_original.name;
-            var params = {
-                Key: objKey,
+        var file_pc = files[1];
+        if (file_original && file_pc) {
+            var obj_original_key = file_original.name;
+            var params_original = {
+                Key: obj_original_key,
                 ContentType: file_original.type,
                 Body: file_original,
                 // ACL: 'public-read-write'
             };
 
-            bucket.putObject(params, function(err, data) {
+            var obj_pc_key = file_pc.name;
+            var params_pc = {
+                Key: obj_pc_key,
+                ContentType: file_pc.type,
+                Body: file_pc,
+                // ACL: 'public-read-write'
+            };
+
+            bucket.putObject(params_original, function(err, data) {
                 if (err) {
                     console.log(err)
                 } else {
-                    listObjs();
+                    console.log("Done")
+                }
+            });
+
+            bucket.putObject(params_pc, function(err, data) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    console.log("Done")
                 }
             });
         } else {
-            results.innerHTML = 'Nothing to upload.';
+            console.log("You need two .stl files");
         }
 
         
